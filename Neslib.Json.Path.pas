@@ -441,7 +441,7 @@ end;
 
 function TJsonPath.Match(const ARoot: TJsonValue): TArray<TJsonValue>;
 begin
-  Assert(False);
+  Result := Match(ARoot, False);
 end;
 
 function TJsonPath.Match(const ADoc: IJsonDocument): TArray<TJsonValue>;
