@@ -383,13 +383,20 @@ begin
 end;
 
 procedure TJsonPath.AddOperator(const AOperator: TOperator);
+var
+  I: Integer;
 begin
   if (FOperatorCount >= Length(FOperators)) then
   begin
     if (FOperatorCount = 0) then
       SetLength(FOperators, 4)
     else
+    begin
       SetLength(FOperators, FOperatorCount * 2);
+      { Issue #1: adjust the Next pointers after a resize }
+      for I := 0 to FOperatorCount - 1 do
+        FOperators[I].Next := @FOperators[I + 1];
+    end;
   end;
   FOperators[FOperatorCount] := AOperator;
 

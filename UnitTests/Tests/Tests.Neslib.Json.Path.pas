@@ -74,6 +74,12 @@ type
     [Test] procedure Test3;
   end;
 
+type
+  TestJsonPathIssues = class
+  public
+    [Test] procedure TestIssue1;
+  end;
+
 implementation
 
 const
@@ -444,10 +450,63 @@ begin
   Test('$.points[*].x', ['4', '-2', '8', '-6', '0', '1']);
 end;
 
+{ TestJsonPathIssues }
+
+procedure TestJsonPathIssues.TestIssue1;
+// https://github.com/neslib/Neslib.Json/issues/1
+const
+  JSON =
+    '{ "store": {'#10+
+    '    "book": [ '#10+
+    '      { "category": "reference",'#10+
+    '        "author": "Nigel Rees",'#10+
+    '        "title": "Sayings of the Century",'#10+
+    '        "price": 8.95,'#10+
+    '        "Sale": {'#10+
+    '          "OnSale" : "Yes"'#10+
+    '        }'#10+
+    '      },'#10+
+    '      { "category": "fiction",'#10+
+    '        "author": "Evelyn Waugh",'#10+
+    '        "title": "Sword of Honour",'#10+
+    '        "price": 12.99'#10+
+    '      },'#10+
+    '      { "category": "fiction",'#10+
+    '        "author": "Herman Melville",'#10+
+    '        "title": "Moby Dick",'#10+
+    '        "isbn": "0-553-21311-3",'#10+
+    '        "price": 8.99'#10+
+    '      },'#10+
+    '      { "category": "fiction",'#10+
+    '        "author": "J. R. R. Tolkien",'#10+
+    '        "title": "The Lord of the Rings",'#10+
+    '        "isbn": "0-395-19395-8",'#10+
+    '        "price": 22.99'#10+
+    '      }'#10+
+    '    ],'#10+
+    '    "bicycle": {'#10+
+    '      "color": "red",'#10+
+    '      "price": 19.95'#10+
+    '    }'#10+
+    '  }'#10+
+    '}';
+var
+  Doc: IJsonDocument;
+  Matches: TArray<TJsonValue>;
+  S: String;
+begin
+  Doc := TJsonDocument.Parse(JSON);
+  Matches := TJsonPath.Match(Doc, '$.store.book[0].Sale.OnSale');
+  Assert.AreEqual(1, Length(Matches));
+  Assert.AreEqual('"Yes"', Matches[0].ToJson);
+  Assert.AreEqual('Yes', Matches[0].ToString);
+end;
+
 initialization
   ReportMemoryLeaksOnShutdown := True;
   TDUnitX.RegisterTestFixture(TestJsonPathErrors);
   TDUnitX.RegisterTestFixture(TestJsonPathExamples);
   TDUnitX.RegisterTestFixture(TestJsonPath);
+  TDUnitX.RegisterTestFixture(TestJsonPathIssues);
 
 end.

@@ -1014,7 +1014,7 @@ var
 begin
   A := PJsonArray(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (A.FSubtype <> SUBTYPE_ARRAY) then
-    raise EInvalidOperation.Create('Add can only be used for JSON arrays');
+    raise EInvalidOperation.Create('AddArray can only be used for JSON arrays');
 
   Result := A.AddArray;
 end;
@@ -1025,7 +1025,7 @@ var
 begin
   A := PJsonArray(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (A.FSubtype <> SUBTYPE_ARRAY) then
-    raise EInvalidOperation.Create('Add can only be used for JSON arrays');
+    raise EInvalidOperation.Create('AddDictionary can only be used for JSON arrays');
 
   Result := A.AddDictionary;
 end;
@@ -1036,7 +1036,7 @@ var
 begin
   A := PJsonArray(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (A.FSubtype <> SUBTYPE_ARRAY) then
-    raise EInvalidOperation.Create('Add can only be used for JSON arrays');
+    raise EInvalidOperation.Create('AddNull can only be used for JSON arrays');
 
   A.AddNull;
 end;
@@ -1047,7 +1047,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetArray can only be used for JSON dictionaries');
 
   Result := D.AddOrSetArray(AName);
 end;
@@ -1058,7 +1058,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetDictionary can only be used for JSON dictionaries');
 
   Result := D.AddOrSetDictionary(AName);
 end;
@@ -1069,7 +1069,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetNull can only be used for JSON dictionaries');
 
   D.AddOrSetNull(AName);
 end;
@@ -1080,7 +1080,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetValue can only be used for JSON dictionaries');
 
   D.AddOrSetValue(AName, AValue);
 end;
@@ -1091,7 +1091,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetValue can only be used for JSON dictionaries');
 
   D.AddOrSetValue(AName, AValue);
 end;
@@ -1102,7 +1102,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetValue can only be used for JSON dictionaries');
 
   D.AddOrSetValue(AName, AValue);
 end;
@@ -1113,7 +1113,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetValue can only be used for JSON dictionaries');
 
   D.AddOrSetValue(AName, AValue);
 end;
@@ -1124,7 +1124,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetValue can only be used for JSON dictionaries');
 
   D.AddOrSetValue(AName, AValue);
 end;
@@ -1135,7 +1135,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetValue can only be used for JSON dictionaries');
 
   D.AddOrSetValue(AName, AValue);
 end;
@@ -1146,7 +1146,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetValue can only be used for JSON dictionaries');
 
   D.AddOrSetValue(AName, AValue);
 end;
@@ -1157,7 +1157,7 @@ var
 begin
   D := PJsonDictionary(FBITS and VALUE_MASK);
   if ((FBits and TYPE_MASK) <> TYPE_HEAP) or (D.FSubtype <> SUBTYPE_DICT) then
-    raise EInvalidOperation.Create('SetArray can only be used for JSON dictionaries');
+    raise EInvalidOperation.Create('AddOrSetValue can only be used for JSON dictionaries');
 
   D.AddOrSetValue(AName, AValue);
 end;
