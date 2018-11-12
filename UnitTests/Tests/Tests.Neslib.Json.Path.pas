@@ -493,7 +493,6 @@ const
 var
   Doc: IJsonDocument;
   Matches: TArray<TJsonValue>;
-  S: String;
 begin
   Doc := TJsonDocument.Parse(JSON);
   Matches := TJsonPath.Match(Doc, '$.store.book[0].Sale.OnSale');

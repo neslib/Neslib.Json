@@ -9,6 +9,7 @@ uses
   System.Generics.Defaults,
   System.Generics.Collections,
   DUnitX.TestFramework,
+  Neslib.SysUtils,
   Neslib.Json,
   Neslib.Json.IO;
 
@@ -1422,7 +1423,7 @@ procedure TestJsonData.WriteValueTree(const ABuilder: TStringBuilder;
 
   procedure WriteLine(const AStr: String; const AArgs: array of const);
   begin
-    ABuilder.Append(Format(AStr, AArgs)).AppendLine;
+    ABuilder.Append(Format(AStr, AArgs, USFormatSettings)).AppendLine;
   end;
 
 var
