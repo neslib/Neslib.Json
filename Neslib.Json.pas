@@ -1897,7 +1897,8 @@ begin
   case FBits and TYPE_MASK of
     TYPE_FIXED:
       if (FBits = 0) then
-        Result := 'null'
+//        Result := 'null'
+        Result := ''
       else if (FBits = (2 shl TYPE_BITS)) then
         Result := 'true'
       else
