@@ -640,7 +640,10 @@ begin
 
   SetLength(Bytes, AStream.Size);
   if (Bytes <> nil) then
+  begin
+    AStream.ReadBuffer(Bytes, Length(Bytes));
     Json := Utf8ToUtf16(@Bytes[0], Length(Bytes));
+  end;
 {$ENDIF}
 
   Result := TJsonReader.Create(Json);
