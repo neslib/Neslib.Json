@@ -5,7 +5,8 @@ interface
 uses
   DUnitX.TestFramework,
   Neslib.Json,
-  Neslib.Json.Path;
+  Neslib.Json.Path,
+  Neslib.Json.Types;
 
 type
   TestJsonPathErrors = class
@@ -497,8 +498,8 @@ begin
   Doc := TJsonDocument.Parse(JSON);
   Matches := TJsonPath.Match(Doc, '$.store.book[0].Sale.OnSale');
   Assert.AreEqual(1, Length(Matches));
-  Assert.AreEqual('"Yes"', Matches[0].ToJson);
-  Assert.AreEqual('Yes', Matches[0].ToString);
+  Assert.AreEqual<JsonString>('"Yes"', Matches[0].ToJson);
+  Assert.AreEqual<JsonString>('Yes', Matches[0].ToString);
 end;
 
 initialization

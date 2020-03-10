@@ -7,7 +7,8 @@ uses
   System.SysUtils,
   DUnitX.TestFramework,
   Neslib.Json,
-  Neslib.Json.IO;
+  Neslib.Json.IO,
+  Neslib.Json.Types;
 
 type
   TestJsonValue = class
@@ -427,7 +428,7 @@ end;
 
 procedure TestJsonValue.TestImplicitToString;
 begin
-  Assert.AreEqual<JsonString>('null', FValue.Items[0]);
+  Assert.AreEqual<JsonString>('', FValue.Items[0]);
   Assert.AreEqual<JsonString>('false', FValue.Items[1]);
   Assert.AreEqual<JsonString>('true', FValue.Items[2]);
   Assert.AreEqual<JsonString>('-2147483648', FValue.Items[3]);
@@ -1092,7 +1093,7 @@ end;
 
 procedure TestJsonValue.TestToString;
 begin
-  Assert.AreEqual<JsonString>('null', FValue.Items[0].ToString('(!)'));
+  Assert.AreEqual<JsonString>('', FValue.Items[0].ToString('(!)'));
   Assert.AreEqual<JsonString>('false', FValue.Items[1].ToString('(!)'));
   Assert.AreEqual<JsonString>('true', FValue.Items[2].ToString('(!)'));
   Assert.AreEqual<JsonString>('-2147483648', FValue.Items[3].ToString('(!)'));

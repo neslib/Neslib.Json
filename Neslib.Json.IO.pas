@@ -7,18 +7,8 @@ interface
 
 uses
   System.Classes,
-  System.SysUtils;
-
-type
-  {$IFDEF JSON_UTF8}
-  JsonChar = UTF8Char;
-  PJsonChar = PUTF8Char;
-  JsonString = UTF8String;
-  {$ELSE}
-  JsonChar = WideChar;
-  PJsonChar = PWideChar;
-  JsonString = String;
-  {$ENDIF}
+  System.SysUtils,
+  Neslib.Json.Types;
 
 type
   { The current state of an IJsonReader. }
@@ -280,27 +270,9 @@ type
       procedure Init(const AState: TState); inline;
     end;
   {$IFDEF JSON_STRING_INTERNING}
-  private type
-    TInternedStrings = record
-    private const
-      EMPTY_HASH = -1;
-    private type
-      TItem = record
-        HashCode: Integer;
-        Str: JsonString;
-      end;
-    private
-      FItems: TArray<TItem>;
-      FCount: Integer;
-      FGrowThreshold: Integer;
-    private
-      procedure Resize(ANewSize: Integer);
-    public
-      function Intern(const AStr: JsonString): JsonString;
-    end;
   private
-    FInternedStrings: TInternedStrings;
-  {$ENDIF !JSON_STRING_INTERNING}
+    FStringInternPool: TJsonStringInternPool;
+  {$ENDIF}
   private
     FJson: JsonString;
     FBuffer: PJsonChar;
@@ -340,6 +312,8 @@ type
     procedure ReadEndArray;
     procedure ReadStartDictionary;
     procedure ReadEndDictionary;
+  public
+    destructor Destroy; override;
   {$ENDREGION 'Internal Declarations'}
   public
     { Creates a reader using a JSON formatted string to parse.
@@ -593,6 +567,9 @@ end;
 constructor TJsonReader.Create(const AJson: JsonString);
 begin
   inherited Create;
+  {$IFDEF JSON_STRING_INTERNING}
+  FStringInternPool := TJsonStringInternPool.Create;
+  {$ENDIF}
   FJson := AJson;
   FBuffer := PJsonChar(AJson);
   FCurrent := FBuffer;
@@ -600,6 +577,14 @@ begin
   FLineNumber := 1;
   FContextIndex := -1;
   PushContext(TState.TopLevel);
+end;
+
+destructor TJsonReader.Destroy;
+begin
+  {$IFDEF JSON_STRING_INTERNING}
+  FStringInternPool.Free;
+  {$ENDIF}
+  inherited;
 end;
 
 class function TJsonReader.IsDelimiter(const AChar: JsonChar): Boolean;
@@ -1177,11 +1162,13 @@ begin
 
       '"':
         begin
-          SetString(FStringValue, Start, Cur - Start);
-
           {$IFDEF JSON_STRING_INTERNING}
           if (FState = TJsonReaderState.Name) then
-            FStringValue := FInternedStrings.Intern(FStringValue);
+            FStringValue := FStringInternPool.Get(Start, Cur - Start)
+          else
+            SetString(FStringValue, Start, Cur - Start);
+          {$ELSE}
+          SetString(FStringValue, Start, Cur - Start);
           {$ENDIF}
 
           FCurrent := Cur + 1;
@@ -1202,10 +1189,10 @@ begin
   while (not IsDelimiter(Cur^)) do
     Inc(Cur);
 
-  SetString(FStringValue, Start, Cur - Start);
-
   {$IFDEF JSON_STRING_INTERNING}
-  FStringValue := FInternedStrings.Intern(FStringValue);
+  FStringValue := FStringInternPool.Get(Start, Cur - Start);
+  {$ELSE}
+  SetString(FStringValue, Start, Cur - Start);
   {$ENDIF}
 
   FCurrent := Cur;
@@ -1406,69 +1393,6 @@ begin
   State := AState;
   HasElements := False;
 end;
-
-{$IFDEF JSON_STRING_INTERNING}
-
-{ TJsonReader.TInternedStrings }
-
-function TJsonReader.TInternedStrings.Intern(const AStr: JsonString): JsonString;
-var
-  Mask, Index, HashCode, HC: Integer;
-begin
-  if (FCount >= FGrowThreshold) then
-    Resize(Length(FItems) * 2);
-
-  HashCode := MurmurHash2(AStr[Low(JsonString)], Length(AStr) * SizeOf(JsonChar));
-  Mask := Length(FItems) - 1;
-  Index := HashCode and Mask;
-
-  while True do
-  begin
-    HC := FItems[Index].HashCode;
-    if (HC = EMPTY_HASH) then
-      Break;
-
-    if (HC = HashCode) and (FItems[Index].Str = AStr) then
-      Exit(FItems[Index].Str);
-
-    Index := (Index + 1) and Mask;
-  end;
-
-  FItems[Index].HashCode := HashCode;
-  FItems[Index].Str := AStr;
-  Inc(FCount);
-  Result := AStr;
-end;
-
-procedure TJsonReader.TInternedStrings.Resize(ANewSize: Integer);
-var
-  NewMask, I, NewIndex: Integer;
-  OldItems, NewItems: TArray<TItem>;
-begin
-  if (ANewSize < 4) then
-    ANewSize := 4;
-  NewMask := ANewSize - 1;
-  SetLength(NewItems, ANewSize);
-  for I := 0 to ANewSize - 1 do
-    NewItems[I].HashCode := EMPTY_HASH;
-  OldItems := FItems;
-
-  for I := 0 to Length(OldItems) - 1 do
-  begin
-    if (OldItems[I].HashCode <> EMPTY_HASH) then
-    begin
-      NewIndex := OldItems[I].HashCode and NewMask;
-      while (NewItems[NewIndex].HashCode <> EMPTY_HASH) do
-        NewIndex := (NewIndex + 1) and NewMask;
-      NewItems[NewIndex] := OldItems[I];
-    end;
-  end;
-
-  FItems := NewItems;
-  FGrowThreshold := (ANewSize * 3) shr 2; // 75%
-end;
-
-{$ENDIF !JSON_STRING_INTERNING}
 
 { TJsonWriter }
 

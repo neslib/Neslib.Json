@@ -4,6 +4,7 @@ interface
 
 uses
   System.SysUtils,
+  Neslib.Json.Types,
   Neslib.Json;
 
 function LoadTestData(const APath: String): TBytes;

@@ -11,7 +11,8 @@ uses
   DUnitX.TestFramework,
   Neslib.SysUtils,
   Neslib.Json,
-  Neslib.Json.IO;
+  Neslib.Json.IO,
+  Neslib.Json.Types;
 
 type
   TestJsonReader = class

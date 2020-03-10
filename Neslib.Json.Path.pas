@@ -165,6 +165,7 @@ interface
 
 uses
   System.SysUtils,
+  Neslib.Json.Types,
   Neslib.Json;
 
 type

@@ -13,7 +13,8 @@ uses
   Tests.Neslib.Json in 'Tests\Tests.Neslib.Json.pas',
   Neslib.Json.IO in '..\Neslib.Json.IO.pas',
   Neslib.Json.Path in '..\Neslib.Json.Path.pas',
-  Tests.Neslib.Json.Path in 'Tests\Tests.Neslib.Json.Path.pas';
+  Tests.Neslib.Json.Path in 'Tests\Tests.Neslib.Json.Path.pas',
+  Neslib.Json.Types in '..\Neslib.Json.Types.pas';
 
 var
   Runner: ITestRunner;

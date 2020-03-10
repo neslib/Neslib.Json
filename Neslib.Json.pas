@@ -157,18 +157,8 @@ interface
 uses
   System.Classes,
   System.SysUtils,
+  Neslib.Json.Types,
   Neslib.Json.IO;
-
-type
-  {$IFDEF JSON_UTF8}
-  JsonChar = UTF8Char;
-  PJsonChar = PUTF8Char;
-  JsonString = UTF8String;
-  {$ELSE}
-  JsonChar = WideChar;
-  PJsonChar = PWideChar;
-  JsonString = String;
-  {$ENDIF}
 
 type
   { Data types supported by JSON }
