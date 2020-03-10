@@ -257,7 +257,7 @@ var
   I: Integer;
 begin
   Matches := TJsonPath.Match(FDoc, AExpression);
-  Assert.AreEqual(Length(AExpected), Length(Matches));
+  Assert.AreEqual<Integer>(Length(AExpected), Length(Matches));
 
   for I := 0 to Length(Matches) - 1 do
     Assert.AreEqual(AExpected[I], Matches[I].ToJson(False));
@@ -295,7 +295,7 @@ var
   Matches: TArray<TJsonValue>;
 begin
   Matches := TJsonPath.Match(FDoc, '$.store.*');
-  Assert.AreEqual(2, Length(Matches));
+  Assert.AreEqual<Integer>(2, Length(Matches));
 
   // First match is array of 4 books
   Assert.IsTrue(Matches[0].IsArray);
@@ -341,7 +341,7 @@ var
   Matches: TArray<TJsonValue>;
 begin
   Matches := TJsonPath.Match(FDoc, '$');
-  Assert.AreEqual(1, Length(Matches));
+  Assert.AreEqual<Integer>(1, Length(Matches));
   Assert.IsTrue(Matches[0] = FDoc.Root);
 end;
 
@@ -497,7 +497,7 @@ var
 begin
   Doc := TJsonDocument.Parse(JSON);
   Matches := TJsonPath.Match(Doc, '$.store.book[0].Sale.OnSale');
-  Assert.AreEqual(1, Length(Matches));
+  Assert.AreEqual<Integer>(1, Length(Matches));
   Assert.AreEqual<JsonString>('"Yes"', Matches[0].ToJson);
   Assert.AreEqual<JsonString>('Yes', Matches[0].ToString);
 end;
