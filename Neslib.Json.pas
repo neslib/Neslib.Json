@@ -573,6 +573,19 @@ type
       This allows for chaining without having to check every intermediate step,
       as in Foo.Items[1].Items[3].Items[2].ToInteger. }
     property Items[const AIndex: Integer]: TJsonValue read GetItem;
+
+    { Alias for the Items property. Enables the default array property using an
+      integer index. That is:
+
+        MyValue[0];
+
+      is equivalent to
+
+        MyValue.Items[0];
+
+      There is also an indexer that uses a string index, which is an alias for
+      the Values property. }
+    property _Indexer[const AIndex: Integer]: TJsonValue read GetItem; default;
   public
     (*************************************************************************)
     (* The methods in this section only apply to dictionaries (that is, if   *)
@@ -704,6 +717,19 @@ type
       This allows for chaining without having to check every intermediate step,
       as in Foo.Value['bar'].Values['baz'].ToInteger. }
     property Values[const AName: JsonString]: TJsonValue read GetValue;
+
+    { Alias for the Values property. Enables the default property using a
+      string index. That is:
+
+        MyValue['foo'];
+
+      is equivalent to
+
+        MyValue.Values['foo'];
+
+      There is also an indexer that uses an integer index, which is an alias for
+      the Items property. }
+    property _Indexer[const AName: JsonString]: TJsonValue read GetValue; default;
 
     { The elements (name/value pairs) in the dictionary by index.
 

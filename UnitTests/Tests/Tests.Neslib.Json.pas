@@ -55,6 +55,8 @@ type
     [Test] procedure TestClear;
     [Test] procedure TestDelete;
     [Test] procedure TestCount;
+
+    [Test] procedure TestIndexers;
   end;
 
 implementation
@@ -455,6 +457,27 @@ begin
   Assert.AreEqual<JsonString>('', FValue.Items[24]);
   Assert.AreEqual<JsonString>('', FValue.Items[25]);
   Assert.AreEqual<JsonString>('', FValue.Items[26]);
+end;
+
+procedure TestJsonValue.TestIndexers;
+var
+  V1, V2: TJsonValue;
+  D: TJsonValue;
+begin
+  V1 := FValue.Items[20];
+  Assert.AreEqual('foo', V1.ToString);
+
+  V2 := FValue[20];
+  Assert.AreEqual('foo', V2.ToString);
+
+  D := FValue[26];
+  Assert.IsTrue(D.IsDictionary);
+
+  V1 := D.Values['val1'];
+  Assert.AreEqual<Integer>(42, V1.ToInteger);
+
+  V2 := D['val1'];
+  Assert.AreEqual<Integer>(42, V2.ToInteger);
 end;
 
 procedure TestJsonValue.TestIndexOfName;
