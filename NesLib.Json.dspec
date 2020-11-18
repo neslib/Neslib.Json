@@ -4,7 +4,7 @@
     "version": "0.1.0",
     "description": "NesLib Json Library",
     "authors": "Erik van Bilsen",
-    "projectUrl": "https://github.com/neslib/Neslib",
+    "projectUrl": "https://github.com/neslib/Neslib.Json",
     "license": "BSD-2-Clause",
     "copyright": "2018 Erik van Bilsen",
     "tags": "json parser"
