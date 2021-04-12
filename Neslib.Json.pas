@@ -1276,7 +1276,25 @@ var
   P: Pointer;
 begin
   P := nil;
+  {$IFDEF POSIX}
+  { Issue #10: On Android and Linux, AValue may be aligned on a 2-byte boundary
+    instead of a 4-byte boundary. This is usually the case when AValue is a
+    string constant (ref count of -1) and contains just a single character. }
+  if ((UIntPtr(AValue) and TYPE_MASK) = 0) then
+    { Already correctly aligned }
+    JsonString(P) := AValue // Increases ref count
+  else
+  begin
+    { Use UniqueString to create a new string with the given value.
+      UniqueStrings allocates a new string to an address that *should* be
+      4-byte aligned. }
+    var S := AValue;
+    UniqueString(S);
+    JsonString(P) := S; // Increases ref count
+  end;
+  {$ELSE}
   JsonString(P) := AValue; // Increases ref count
+  {$ENDIF}
   Assert((UIntPtr(P) and TYPE_MASK) = 0);
   Result.FBits := TYPE_STR or UIntPtr(P);
 end;
