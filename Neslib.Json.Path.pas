@@ -368,6 +368,9 @@ resourcestring
 
 implementation
 
+uses
+  System.Classes;
+
 { TJsonPath }
 
 procedure TJsonPath.AddMatch(const AMatch: TJsonValue);
