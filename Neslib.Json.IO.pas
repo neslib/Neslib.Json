@@ -1693,7 +1693,11 @@ begin
           Append(',');
 
         Append(FLineBreak);
-        Append(FIndentation[0], FContext.Indent * SizeOf(JsonChar));
+
+        { Issue #13: Check for empty array }
+        if (FIndentation <> nil) then
+          Append(FIndentation[0], FContext.Indent * SizeOf(JsonChar));
+
         WriteQuotedString(FName);
         Append(' : ');
       end;

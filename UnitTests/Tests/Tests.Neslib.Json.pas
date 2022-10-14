@@ -29,6 +29,7 @@ type
     [Test] procedure TestToDouble;
     [Test] procedure TestToString;
     [Test] procedure TestToJson;
+    [Test] procedure TestToJson_Issue13;
     [Test] procedure TestIntLayout;
     [Test] procedure TestEqual;
     [Test] procedure TestJsonType;
@@ -465,10 +466,10 @@ var
   D: TJsonValue;
 begin
   V1 := FValue.Items[20];
-  Assert.AreEqual('foo', V1.ToString);
+  Assert.AreEqual<JsonString>('foo', V1.ToString);
 
   V2 := FValue[20];
-  Assert.AreEqual('foo', V2.ToString);
+  Assert.AreEqual<JsonString>('foo', V2.ToString);
 
   D := FValue[26];
   Assert.IsTrue(D.IsDictionary);
@@ -1112,6 +1113,12 @@ begin
     '[], [42, true, "foo", [4.125, null]], '+
     '{ }, { "val1" : 42, "val2" : 3.5, "val3" : "foo" }]',
     Json);
+end;
+
+procedure TestJsonValue.TestToJson_Issue13;
+begin
+  var Doc := TJsonDocument.Parse('{"i":[-1,0,1]}');
+  var Str := Doc.ToJson(False);
 end;
 
 procedure TestJsonValue.TestToString;

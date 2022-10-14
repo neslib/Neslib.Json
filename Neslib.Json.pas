@@ -1237,10 +1237,10 @@ var
 {$ENDIF}
 begin
   {$IFDEF CPU64BITS}
-  Result.FBits := TYPE_INT or (Int64(AValue) shl TYPE_BITS);
+  Result.FBits := TYPE_INT or (UIntPtr(AValue) shl TYPE_BITS);
   {$ELSE}
   if (AValue >= MIN_INT) and (AValue <= MAX_INT) then
-    Result.FBits := TYPE_INT or (AValue shl TYPE_BITS)
+    Result.FBits := TYPE_INT or UIntPtr(AValue shl TYPE_BITS)
   else
   begin
     GetMem(P, SizeOf(THeapInt));
@@ -1259,7 +1259,7 @@ begin
   {$IFDEF CPU64BITS}
   if (AValue >= MIN_INT) and (AValue <= MAX_INT) then
   begin
-    Result.FBits := TYPE_INT or (AValue shl TYPE_BITS);
+    Result.FBits := TYPE_INT or UIntPtr(AValue shl TYPE_BITS);
     Exit;
   end;
   {$ENDIF}
@@ -1638,12 +1638,12 @@ end;
 
 class operator TJsonValue.Implicit(const AValue: TJsonValue): UInt64;
 begin
-  Result := AValue.ToInt64(0);
+  Result := UInt64(AValue.ToInt64(0));
 end;
 
 class operator TJsonValue.Implicit(const AValue: TJsonValue): UInt32;
 begin
-  Result := AValue.ToInt32(0);
+  Result := UInt32(AValue.ToInt32(0));
 end;
 
 class operator TJsonValue.Implicit(const AValue: TJsonValue): UInt8;
@@ -1843,7 +1843,7 @@ begin
 
     TYPE_INT:
       begin
-        Result := FBits shr TYPE_BITS;
+        Result := Int32(FBits shr TYPE_BITS);
         {$IFDEF CPU32BITS}
         if (NativeInt(FBits) < 0) then
           Result := Result or EXTEND_BITS;
@@ -1858,7 +1858,7 @@ begin
         I := PHeapInt(FBits and VALUE_MASK);
         case I.SubType of
           SUBTYPE_INT:
-            Result := I.Value;
+            Result := Int32(I.Value);
 
           SUBTYPE_FLOAT:
             Result := Trunc(F.Value);
@@ -2282,7 +2282,10 @@ begin
   if (FCount >= FGrowThreshold) then
     Resize(FCapacity * 2);
 
-  HashCode := MurmurHash2(AName[Low(JsonString)], Length(AName) * SizeOf(JsonChar));
+  if (AName = '') then
+    HashCode := 0
+  else
+    HashCode := MurmurHash2(AName[Low(JsonString)], Length(AName) * SizeOf(JsonChar));
   Mask := FCapacity - 1;
   Index := HashCode and Mask;
 
