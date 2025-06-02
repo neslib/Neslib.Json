@@ -1,4 +1,4 @@
-unit Tests.Neslib.Json.IO;
+﻿unit Tests.Neslib.Json.IO;
 
 interface
 
@@ -42,6 +42,8 @@ type
     [Test] procedure TestUnquotedName;
     [Test] procedure TestUnquotedString;
     [Test] procedure TestEscapedString;
+    [Test] procedure TestIssue15;
+    [Test] procedure TestIssue17;
   end;
 
 type
@@ -777,6 +779,46 @@ begin
     begin
       Doc := TJsonDocument.Parse(JSON);
     end, EJsonParserError);
+end;
+
+procedure TestJsonReader.TestIssue15;
+var
+  S1, S2: UTF8String;
+  Doc: IJsonDocument;
+begin
+  S1 := '{"s":"クランクケース/全面カバー"}';
+  Doc := TJsonDocument.Parse(JsonString(S1));
+  S2 := UTF8String(Doc.Root.ToJson(False));
+end;
+
+procedure TestJsonReader.TestIssue17;
+var
+  Stream: TBytesStream;
+  Writer: TStreamWriter;
+  Reader: IJsonReader;
+  State: TJsonReaderState;
+begin
+  Stream := TBytesStream.Create;
+  try
+    Writer := TStreamWriter.Create(Stream, TEncoding.UTF8);
+    try
+      Writer.Write('"foo"');
+    finally
+      Writer.Free;
+    end;
+
+    Stream.Position := 0;
+    Assert.AreEqual($EF, Stream.Bytes[0]);
+    Assert.AreEqual($BB, Stream.Bytes[1]);
+    Assert.AreEqual($BF, Stream.Bytes[2]);
+
+    Reader := TJsonReader.Load(Stream);
+    Assert.IsTrue(Reader.Next(State));
+    Assert.AreEqual<TJsonReaderState>(TJsonReaderState.String, State);
+    Assert.AreEqual('foo', Reader.ReadString);
+  finally
+    Stream.Free;
+  end;
 end;
 
 procedure TestJsonReader.TestNaN;

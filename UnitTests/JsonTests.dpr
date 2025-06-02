@@ -23,6 +23,7 @@ var
 begin
   try
     ReportMemoryLeaksOnShutdown := True;
+    TDUnitX.Options.ExitBehavior := TDUnitXExitBehavior.Pause;
 
     // Check command line options, will exit if invalid
     TDUnitX.CheckCommandLine;

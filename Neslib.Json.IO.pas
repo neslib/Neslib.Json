@@ -298,6 +298,7 @@ type
     procedure ParseUnquotedString;
     procedure ParseEscapedString(const AStart, ACur: PJsonChar);
   private
+    class function SkipUtf8Bom(const AStream: TStream): Int64; static;
     class function IsDelimiter(const AChar: JsonChar): Boolean; static; inline;
   protected
     { IJsonReader }
@@ -612,9 +613,10 @@ begin
   if (AStream = nil) then
     Exit(nil);
 
-  SetLength(Json, AStream.Size);
+  var Size := SkipUtf8Bom(AStream);
+  SetLength(Json, Size);
   if (Json <> '') then
-    AStream.ReadBuffer(Json[Low(JsonString)], Length(Json));
+    AStream.ReadBuffer(Json[Low(JsonString)], Size);
 {$ELSE}
 var
   Bytes: TBytes;
@@ -623,11 +625,12 @@ begin
   if (AStream = nil) then
     Exit(nil);
 
-  SetLength(Bytes, AStream.Size);
+  var Size := SkipUtf8Bom(AStream);
+  SetLength(Bytes, Size);
   if (Bytes <> nil) then
   begin
-    AStream.ReadBuffer(Bytes, Length(Bytes));
-    Json := Utf8ToUtf16(@Bytes[0], Length(Bytes));
+    AStream.ReadBuffer(Bytes, Size);
+    Json := Utf8ToUtf16(@Bytes[0], Size);
   end;
 {$ENDIF}
 
@@ -1364,6 +1367,21 @@ begin
 
   // Name has already been parsed
   Result := FStringValue;
+end;
+
+class function TJsonReader.SkipUtf8Bom(const AStream: TStream): Int64;
+var
+  Bom: array [0..2] of Byte;
+begin
+  var OrigPos := AStream.Position;
+  if (AStream.Read(Bom, 3) = 3) then
+  begin
+    if (Bom[0] = $EF) and (Bom[1] = $BB) and (Bom[2] = $BF) then
+      Exit(AStream.Size - OrigPos - 3);
+  end;
+
+  AStream.Position := OrigPos;
+  Result := AStream.Size - OrigPos;
 end;
 
 procedure TJsonReader.SkipWhitespace;
