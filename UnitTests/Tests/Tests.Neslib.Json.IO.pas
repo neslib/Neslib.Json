@@ -815,7 +815,7 @@ begin
     Reader := TJsonReader.Load(Stream);
     Assert.IsTrue(Reader.Next(State));
     Assert.AreEqual<TJsonReaderState>(TJsonReaderState.String, State);
-    Assert.AreEqual('foo', Reader.ReadString);
+    Assert.AreEqual<JsonString>('foo', Reader.ReadString);
   finally
     Stream.Free;
   end;
