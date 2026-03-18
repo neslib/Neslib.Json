@@ -47,7 +47,7 @@ As you can see in this example, you access the JSON document object model throug
 
   So the following JSON5 example can be successfully loaded:
 
-``` json
+``` json5
 {
   // Single-line comments
   unquoted: "and you can quote me on that",

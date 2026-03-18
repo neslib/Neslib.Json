@@ -5,7 +5,7 @@
         <FrameworkType>None</FrameworkType>
         <MainSource>JsonTests.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug_UTF8_Intern</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
