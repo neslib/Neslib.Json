@@ -14,7 +14,8 @@ uses
   Neslib.Json.IO in '..\Neslib.Json.IO.pas',
   Neslib.Json.Path in '..\Neslib.Json.Path.pas',
   Tests.Neslib.Json.Path in 'Tests\Tests.Neslib.Json.Path.pas',
-  Neslib.Json.Types in '..\Neslib.Json.Types.pas';
+  Neslib.Json.Types in '..\Neslib.Json.Types.pas',
+  Tests.Neslib.Json.Json5 in 'Tests\Tests.Neslib.Json.Json5.pas';
 
 var
   Runner: ITestRunner;

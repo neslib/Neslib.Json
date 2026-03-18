@@ -1639,7 +1639,8 @@ end;
 
 procedure TestJsonChecker.test_fail24;
 begin
-  TestFail('fail24.json', 1, 2);
+  // We allow single quoted strings (JSON5)
+  TestPass('fail24.json');
 end;
 
 procedure TestJsonChecker.test_fail25;
@@ -1671,7 +1672,7 @@ end;
 
 procedure TestJsonChecker.test_fail3;
 begin
-  // we allow unquoted keys
+  // we allow unquoted keys (JSON5)
   TestPass('fail3.json');
 end;
 
@@ -1697,7 +1698,7 @@ end;
 
 procedure TestJsonChecker.test_fail4;
 begin
-  // We allow trailing comma in arrays
+  // We allow trailing comma in arrays (JSON5)
   TestPass('fail4.json');
 end;
 
@@ -1725,7 +1726,7 @@ end;
 
 procedure TestJsonChecker.test_fail9;
 begin
-  // We allow trailing comma in dictionaries
+  // We allow trailing comma in dictionaries (JSON5)
   TestPass('fail9.json');
 end;
 

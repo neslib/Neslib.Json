@@ -18,12 +18,6 @@ begin
 end;
 ```
 
-Note that, unlike the official JSON specification, this library does *not* require quotes around dictionary keys (as long as the key does not contain spaces or other non-identifier characters). So the following is valid as well:
-
-```Delphi
-Doc := TJsonDocument.Parse('{ Answer : 42 }');
-```
-
 You can also use the `Load` method to load from a file or stream.
 
 On the output side, you use `Save` to save to a file or stream, or `ToJson` to output to a JSON string.
@@ -40,6 +34,35 @@ end;
 ```
 
 As you can see in this example, you access the JSON document object model through the Root property.
+
+## JSON5 extensions
+
+[JSON5](https://json5.org/) defines some JSON extensions that aims to be easier to write and maintain JSON files by hand (eg. for config files). Neslib.Json currently supports loading the following JSON 5 extensions:
+
+  * Dictionary keys don't require quotes (as long as the key does not contain spaces or other non-identifier characters).
+  * Dictionaries may have a single trailing comma.
+  * Arrays may have a single trailing comma.
+  * Strings may be single quoted (in addition to double quoted).
+  * C-style single and multi-line comments are allowed.
+
+  So the following JSON5 example can be successfully loaded:
+
+``` json
+{
+  // Single-line comments
+  unquoted: "and you can quote me on that",
+
+  /* Multi-line
+     comments */
+  singleQuotes: 'I can use "double quotes" here',
+    
+  trailingComma: "in objects",
+  andIn: ["arrays" ,],
+  backwardsCompatible: "with JSON",
+}
+```
+
+Note that Neslib.Json does *not* support saving in JSON5 format (only in standard JSON format).
 
 ## JSON object model
 

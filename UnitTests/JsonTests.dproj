@@ -5,7 +5,7 @@
         <FrameworkType>None</FrameworkType>
         <MainSource>JsonTests.dpr</MainSource>
         <Base>True</Base>
-        <Config Condition="'$(Config)'==''">Debug</Config>
+        <Config Condition="'$(Config)'==''">Debug_UTF8_Intern</Config>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
         <TargetedPlatforms>3</TargetedPlatforms>
         <AppType>Console</AppType>
@@ -225,6 +225,7 @@
         <DCCReference Include="..\Neslib.Json.Path.pas"/>
         <DCCReference Include="Tests\Tests.Neslib.Json.Path.pas"/>
         <DCCReference Include="..\Neslib.Json.Types.pas"/>
+        <DCCReference Include="Tests\Tests.Neslib.Json.Json5.pas"/>
         <BuildConfiguration Include="Debug_UTF8_Intern">
             <Key>Cfg_7</Key>
             <CfgParent>Cfg_1</CfgParent>
@@ -286,6 +287,12 @@
                 </DeployFile>
                 <DeployFile LocalName="$(BDS)\Redist\osx64\libcgsqlite3.dylib" Class="DependencyModule"/>
                 <DeployFile LocalName="Win32\Debug\JsonTests.exe" Configuration="Debug" Class="ProjectOutput"/>
+                <DeployFile LocalName="Win32\Debug\JsonTests.exe" Configuration="Debug" Class="ProjectOutput">
+                    <Platform Name="Win32">
+                        <RemoteName>JsonTests.exe</RemoteName>
+                        <Overwrite>true</Overwrite>
+                    </Platform>
+                </DeployFile>
                 <DeployFile LocalName="Win32\Debug_Intern\JsonTests.exe" Configuration="Debug_Intern" Class="ProjectOutput"/>
                 <DeployFile LocalName="Win32\Debug_UTF8\JsonTests.exe" Configuration="Debug_UTF8" Class="ProjectOutput"/>
                 <DeployClass Name="AdditionalDebugSymbols">

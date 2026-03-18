@@ -293,6 +293,9 @@ type
     function ParseError(const AMsg: PResStringRec): EJsonParserError; overload;
     function ParseError(const AMsg: String): EJsonParserError; overload;
     procedure SkipWhitespace;
+    procedure ParseComment;
+    procedure ParseSingleLineComment;
+    procedure ParseMultiLineComment;
     function ParseNumber: TJsonReaderState;
     procedure ParseString;
     procedure ParseUnquotedString;
@@ -428,7 +431,7 @@ resourcestring
 
 {$REGION 'Internal Declarations'}
 const
-  _FLAG_DELIMITER    = $80; // Whitespace, ',', ':', '"', '{', '}', '[', ']'
+  _FLAG_DELIMITER    = $80; // Whitespace, ',', ':', '''', '"', '{', '}', '[', ']'
 
 const
   _CHAR_BITS: array [#0..#127] of Byte = (
@@ -436,8 +439,8 @@ const
     $80, $80, $80, $80, $80, $80, $80, $80,  // #$08-#$0F
     $80, $80, $80, $80, $80, $80, $80, $80,  // #$10-#$17
     $80, $80, $80, $80, $80, $80, $80, $80,  // #$18-#$1F
-    $80, $00, $85, $00, $07, $00, $00, $00,  //  !"#$%&'
-    $00, $00, $00, $00, $88, $06, $06, $00,  // ()*+,-./
+    $80, $00, $85, $00, $07, $00, $00, $85,  //  !"#$%&'
+    $00, $00, $00, $00, $88, $06, $06, $09,  // ()*+,-./
     $06, $06, $06, $06, $06, $06, $06, $06,  // 01234567
     $06, $06, $80, $00, $00, $00, $00, $00,  // 89:;<=>?
     $00, $07, $07, $07, $07, $07, $07, $07,  // @ABCDEFG
@@ -469,6 +472,7 @@ const
   TOKEN_NUMBER      = $06; // '0'-'9', '-', '.'
   TOKEN_IDENTIFIER  = $07; // '_', '$', 'a'..'z', 'A'..'Z'
   TOKEN_COMMA       = $08; // ','
+  TOKEN_COMMENT     = $09; // '/'
   TOKEN_EOF         = $0F;
   TOKEN_MASK        = $0F;
 
@@ -663,6 +667,13 @@ begin
   while True do
   begin
     case (_CHAR_BITS[C] and TOKEN_MASK) of
+      TOKEN_COMMENT:
+        begin
+          ParseComment;
+          SkipWhitespace;
+          C := FCurrent^;
+        end;
+
       TOKEN_EOF:
         begin
           if (FContextIndex > 0) then
@@ -832,6 +843,19 @@ begin
   Result := ParseError(LoadResString(AMsg));
 end;
 
+procedure TJsonReader.ParseComment;
+var
+  Cur: PJsonChar;
+begin
+  Cur := FCurrent + 1; // Skip '/'
+  if (Cur^ = '/') then
+    ParseSingleLineComment
+  else if (Cur^ = '*') then
+    ParseMultiLineComment
+  else
+   raise ParseError(@RS_JSON_UNEXPECTED_CHARACTER);
+end;
+
 function TJsonReader.ParseError(const AMsg: String): EJsonParserError;
 var
   ColumnNumber, Position: Integer;
@@ -971,6 +995,31 @@ begin
   finally
     Buf.Release;
   end;
+end;
+
+procedure TJsonReader.ParseMultiLineComment;
+var
+  Cur: PJsonChar;
+  C: JsonChar;
+begin
+  Cur := FCurrent + 2; // Skip '/*'
+  C := Cur^;
+  while (C <> #0) do
+  begin
+    Inc(Cur);
+    if (C = #10) then
+    begin
+      Inc(FLineNumber);
+      FLineStart := Cur;
+    end
+    else if (C = '*') and (Cur^ = '/') then
+    begin
+      Inc(Cur);
+      Break;
+    end;
+    C := Cur^;
+  end;
+  FCurrent := Cur;
 end;
 
 function TJsonReader.ParseNumber: TJsonReaderState;
@@ -1141,11 +1190,34 @@ begin
   raise ParseError(@RS_JSON_INVALID_NUMBER);
 end;
 
+procedure TJsonReader.ParseSingleLineComment;
+var
+  Cur: PJsonChar;
+  C: JsonChar;
+begin
+  Cur := FCurrent + 2; // Skip '//'
+  C := Cur^;
+  while (C <> #0) do
+  begin
+    Inc(Cur);
+    if (C = #10) then
+    begin
+      Inc(FLineNumber);
+      FLineStart := Cur;
+      Break;
+    end;
+    C := Cur^;
+  end;
+  FCurrent := Cur;
+end;
+
 procedure TJsonReader.ParseString;
 var
+  QuoteChar: JsonChar;
   Cur, Start: PJsonChar;
 begin
-  Cur := FCurrent + 1; // Skip '"'
+  QuoteChar := FCurrent^;
+  Cur := FCurrent + 1; // Skip '''' or '"'
   Start := Cur;
 
   while True do
@@ -1163,7 +1235,8 @@ begin
           Exit;
         end;
 
-      '"':
+      '"', '''':
+        if (Cur^ = QuoteChar) then
         begin
           {$IFDEF JSON_STRING_INTERNING}
           if (FState = TJsonReaderState.Name) then
